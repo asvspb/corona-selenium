@@ -1,4 +1,5 @@
 import logging
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -51,13 +52,13 @@ def main():
         driver.maximize_window()
         driver.get("https://ccq.l.cidious.com/")
 
-        login(driver, '+12345678901', '123123123')
+        login(driver, '+12345678901', os.environ['PASSWORD'])
         time.sleep(2)
 
         logout(driver)
         time.sleep(2)
 
-        login(driver, '+12345678902', '123123123')
+        login(driver, '+12345678902', os.environ['PASSWORD'])
         time.sleep(2)
 
         logout(driver)
