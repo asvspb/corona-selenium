@@ -1,6 +1,6 @@
 sudo apt update
 sudo apt install -y python3 python3-pip wget unzip
-pip3 install selenium logging python-dotenv
+pip3 install selenium python-dotenv
 
 # install Chrome && Chrome WebDriver
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
