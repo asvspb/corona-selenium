@@ -11,6 +11,8 @@ installed_chrome_version=$(google-chrome --version | awk '{print $3}' | cut -d '
 url="https://googlechromelabs.github.io/chrome-for-testing/"
 webdriver_version=$(curl -s "$url" | grep -Po 'https:\/\/edgedl\.me\.gvt1\.com\/edgedl\/chrome\/chrome-for-testing\/\K\d+\.\d+\.\d+\.\d+' | head -n 1)
 
+echo "-------------------------------------"
+echo "Проверка совпадения версий..."
 webdriver_version_prefix=$(echo "$webdriver_version" | cut -d '.' -f 1)
 webdriver_driver_url="https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$webdriver_version/linux64/chrome-linux64.zip"
 
@@ -31,7 +33,6 @@ if [ "$installed_chrome_version" == "$webdriver_version_prefix" ]; then
   tail ./selenium_logs.txt
 
 else
-  echo "-------------------------------------"
   echo "Версия установленного хром - $installed_chrome_version"
   echo "Версия webdriver - $webdriver_version_prefix"
   echo "Не совпадают, пропускаем установку!"
