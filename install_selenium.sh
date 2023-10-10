@@ -1,5 +1,6 @@
+sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo apt update
-sudo apt install -y python3 python3-pip wget unzip
+sudo apt install -y python3-tk python3-pip pythonpy python3.10 wget unzip
 pip3 install selenium python-dotenv
 
 # install current stable Chrome 
