@@ -53,6 +53,8 @@ def main_page(driver):
     try:
         driver.maximize_window()
         driver.get("https://ccq.l.cidious.com/")
+        logging.info("Начало тестирования")
+        logging.info("-------------------")
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
     except Exception as e:
