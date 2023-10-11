@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
+load_dotenv()
 
 
 driver = webdriver.Chrome()
@@ -52,19 +53,20 @@ def logout(driver):
 
 def main_page(driver):
     try:
-        driver.maximize_window()
-        driver.get("https://ccq.l.cidious.com/")
         logging.info("Начало тестирования")
         logging.info("-------------------")
+
+        driver.maximize_window()
+        driver.get("https://ccq.l.cidious.com/")
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
+
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
 
 
 def main():
     try:
-        load_dotenv()
 
         main_page(driver)
         time.sleep(2)
