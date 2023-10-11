@@ -4,6 +4,7 @@ import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from dotenv import load_dotenv
 
 
 driver = webdriver.Chrome()
@@ -63,20 +64,22 @@ def main_page(driver):
 
 def main():
     try:
+        load_dotenv()
+
         main_page(driver)
         time.sleep(2)
 
-        # login(driver, '+12345678901', os.environ['PASSWORD'])
-        # time.sleep(2)
+        login(driver, '+12345678901', os.environ['PASSWORD'])
+        time.sleep(2)
 
-        # logout(driver)
-        # time.sleep(2)
+        logout(driver)
+        time.sleep(2)
 
-        # login(driver, '+12345678902', os.environ['PASSWORD'])
-        # time.sleep(2)
+        login(driver, '+12345678902', os.environ['PASSWORD'])
+        time.sleep(2)
 
-        # logout(driver)
-        # time.sleep(2)
+        logout(driver)
+        time.sleep(2)
 
     except Exception as e:
         # Записываем общую ошибку в лог
