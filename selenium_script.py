@@ -9,6 +9,7 @@ load_dotenv()
 
 
 driver = webdriver.Chrome()
+url = os.environ['URL']
 
 # Настройка логирования
 logging.basicConfig(
@@ -57,7 +58,7 @@ def main_page(driver):
         logging.info("-------------------")
 
         driver.maximize_window()
-        driver.get("https://ccq.l.cidious.com/")
+        driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
 
