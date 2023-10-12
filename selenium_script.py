@@ -54,8 +54,6 @@ def logout(driver):
 
 def main_page(driver):
     try:
-        logging.info("Начало тестирования")
-        logging.info("-------------------")
 
         driver.maximize_window()
         driver.get(url)
@@ -68,6 +66,8 @@ def main_page(driver):
 
 def main():
     try:
+        logging.info("Начало тестирования")
+        logging.info("-------------------")
 
         main_page(driver)
         time.sleep(2)
@@ -83,6 +83,9 @@ def main():
 
         logout(driver)
         time.sleep(2)
+
+        logging.info("Тестирование успешно завершено!")
+        logging.info("--------------------------------")
 
     except Exception as e:
         # Записываем общую ошибку в лог
