@@ -10,6 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 load_dotenv()
+dom_structure = ''
 driver = webdriver.Chrome()
 url = os.environ['URL']
 trainer = os.environ['LOGIN_TRAINER']
@@ -125,10 +126,16 @@ def main_page(driver):
     """
     try:
 
-        driver.maximize_window()
+        driver.minimize_window()
         driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
+        body = driver.find_element(By.TAG_NAME, 'body')
+        html = body.get_attribute('outerHTML')
+        course_element = driver.find_element(
+            By.CSS_SELECTOR, ".course-list__courses").get_attribute("outerHTML")
+        logging.info(
+            f'Список курсов: {course_element}')
 
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
@@ -141,13 +148,13 @@ def main():
         main_page(driver)
         time.sleep(3)
 
-        log_in(trainer, password)
-        time.sleep(3)
-        log_out()
+        # log_in(trainer, password)
+        # time.sleep(3)
+        # log_out()
 
-        log_in(user, password)
-        time.sleep(3)
-        log_out()
+        # log_in(user, password)
+        # time.sleep(3)
+        # log_out()
 
         time.sleep(3)
         logging.info("Завершение тестирования")
