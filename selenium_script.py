@@ -153,7 +153,7 @@ def find_first_course(driver):
     Logging:
         Logs info message 'Поиск первого курса произведен успешно' if the first course is found successfully.
         Logs error message with the specific exception if there is an error while finding the first course.
-    """
+    """  # noqa: E501
     try:
         course_card = driver.find_elements(By.CLASS_NAME, "course-card")[0]
         course_card_content = course_card.find_element(
