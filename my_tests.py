@@ -7,7 +7,6 @@ from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from lxml import html
 
 
 load_dotenv()
@@ -126,18 +125,29 @@ def main_page(driver):
     """
     try:
 
-        driver.minimize_window()
+        driver.maximize_window()
         driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
-        course_elements = driver.find_element(
-            By.CSS_SELECTOR, ".course-list__courses").get_attribute("outerHTML")
         course_cards = driver.find_elements(By.CLASS_NAME, "course-card")
         logging.info(
             f'Количество курсов на главной странице: {len(course_cards)}')
 
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
+
+
+def find_first_course(driver):
+    try:
+        course_card = driver.find_elements(By.CLASS_NAME, "course-card")[0]
+        course_card_content = course_card.find_element(
+            By.CLASS_NAME, "course-card__content")
+        course_router = course_card_content.find_element(
+            By.CLASS_NAME, "course-card__router")
+        course_router.click()
+        logging.info('Поиск первого курса произведен успешно')
+    except Exception as e:
+        logging.error(f"Ошибка при поиске первого курса: {str(e)}")
 
 
 def main():
@@ -147,6 +157,8 @@ def main():
         main_page(driver)
         time.sleep(3)
 
+        find_first_course(driver)
+        time.sleep(3)
         # log_in(trainer, password)
         # time.sleep(3)
         # log_out()
