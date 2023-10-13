@@ -7,10 +7,10 @@ from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from lxml import html
 
 
 load_dotenv()
-dom_structure = ''
 driver = webdriver.Chrome()
 url = os.environ['URL']
 trainer = os.environ['LOGIN_TRAINER']
@@ -130,12 +130,11 @@ def main_page(driver):
         driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
-        body = driver.find_element(By.TAG_NAME, 'body')
-        html = body.get_attribute('outerHTML')
-        course_element = driver.find_element(
+        course_elements = driver.find_element(
             By.CSS_SELECTOR, ".course-list__courses").get_attribute("outerHTML")
+        course_cards = driver.find_elements(By.CLASS_NAME, "course-card")
         logging.info(
-            f'Список курсов: {course_element}')
+            f'Количество курсов на главной странице: {len(course_cards)}')
 
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
