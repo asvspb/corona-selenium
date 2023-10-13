@@ -173,9 +173,6 @@ def main():
         main_page(driver)
         time.sleep(3)
 
-        find_first_course(driver)
-        time.sleep(3)
-
         log_in(trainer, password)
         time.sleep(3)
         log_out()
@@ -183,6 +180,9 @@ def main():
         log_in(user, password)
         time.sleep(3)
         log_out()
+
+        find_first_course(driver)
+        time.sleep(3)
 
         time.sleep(3)
         logging.info("Завершение тестирования")
