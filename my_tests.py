@@ -125,7 +125,7 @@ def main_page(driver):
     """
     try:
 
-        driver.maximize_window()
+        driver.minimize_window()
         driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
@@ -138,6 +138,22 @@ def main_page(driver):
 
 
 def find_first_course(driver):
+    """
+    Finds the first course on the web page using the given driver.
+
+    Args:
+        driver (WebDriver): The web driver to use for finding the course.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If there is an error while finding the first course.
+
+    Logging:
+        Logs info message 'Поиск первого курса произведен успешно' if the first course is found successfully.
+        Logs error message with the specific exception if there is an error while finding the first course.
+    """
     try:
         course_card = driver.find_elements(By.CLASS_NAME, "course-card")[0]
         course_card_content = course_card.find_element(
