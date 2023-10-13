@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-
+# Загрузка переменных окружения
 load_dotenv()
 driver = webdriver.Chrome()
 url = os.environ['URL']
