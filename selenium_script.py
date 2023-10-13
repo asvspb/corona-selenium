@@ -5,6 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 load_dotenv()
 
 
@@ -64,28 +66,33 @@ def main_page(driver):
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
 
 
+def find_element(selector):
+    return WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+    )
+
+
 def main():
     try:
         logging.info("Начало тестирования")
         logging.info("-------------------")
 
         main_page(driver)
-        time.sleep(2)
+        time.sleep(1)
 
         login(driver, '+12345678901', os.environ['PASSWORD'])
-        time.sleep(2)
+        time.sleep(1)
 
         logout(driver)
-        time.sleep(2)
+        time.sleep(1)
 
         login(driver, '+12345678902', os.environ['PASSWORD'])
-        time.sleep(2)
+        time.sleep(1)
 
         logout(driver)
-        time.sleep(2)
+        time.sleep(1)
 
-        logging.info("Тестирование успешно завершено!")
-        logging.info("--------------------------------")
+        logging.info("Тестирование завершено!")
 
     except Exception as e:
         # Записываем общую ошибку в лог
