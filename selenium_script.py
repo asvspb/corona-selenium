@@ -7,11 +7,14 @@ from selenium.webdriver.common.keys import Keys
 from dotenv import load_dotenv
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+
 load_dotenv()
-
-
 driver = webdriver.Chrome()
 url = os.environ['URL']
+trainer = os.environ['LOGIN_TRAINER']
+user = os.environ['LOGIN_USER']
+password = os.environ['PASSWORD']
 
 # Настройка логирования
 logging.basicConfig(
@@ -22,15 +25,61 @@ logging.basicConfig(
 )
 
 
-def login(driver, username, password):
+def find_element_by_selector(selector):
+    """
+    Finds and returns an element located by the given CSS selector.
+
+    Parameters:
+        selector (str): The CSS selector used to locate the element.
+
+    Returns:
+        WebElement: The element located by the CSS selector.
+
+    Raises:
+        TimeoutException: If the element is not found within 2 seconds.
+    """
+    return WebDriverWait(driver, 2).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+    )
+
+
+def find_element_by_name(name):
+    """
+    Find an element by its name using the given `name` parameter.
+
+    Args:
+        name (str): The name of the element to find.
+
+    Returns:
+        WebElement: The element found by its name.
+
+    Raises:
+        TimeoutException: If the element is not found within 2 seconds.
+
+    """
+    return WebDriverWait(driver, 2).until(
+        EC.presence_of_element_located((By.NAME, name))
+    )
+
+
+def log_in(username, password):
+    """
+    Logs in the user with the given username and password.
+
+    Args:
+        username (str): The username of the user.
+        password (str): The password of the user.
+
+    Returns:
+        None
+    """
     try:
-        driver.find_element(
-            By.CSS_SELECTOR, '.user-button__login .block').click()
-        driver.find_element(By.NAME, 'user_login').clear()
-        driver.find_element(By.NAME, 'user_login').send_keys(username)
-        driver.find_element(By.NAME, 'user_password').clear()
-        driver.find_element(By.NAME, 'user_password').send_keys(password)
-        driver.find_element(By.NAME, 'user_password').send_keys(Keys.ENTER)
+        find_element_by_selector('.user-button__login .block').click()
+        find_element_by_name('user_login').clear()
+        find_element_by_name('user_login').send_keys(username)
+        find_element_by_name('user_password').clear()
+        find_element_by_name('user_password').send_keys(password)
+        find_element_by_name('user_password').send_keys(Keys.ENTER)
 
         # Записываем успешный вход в лог
         logging.info(f"Успешный вход: {username}")
@@ -40,11 +89,21 @@ def login(driver, username, password):
         logging.error(f"Ошибка при входе: {username} - {str(e)}")
 
 
-def logout(driver):
+def log_out():
+    """
+    Logs out the user by clicking on the user menu and then the logout button.
+
+    This function does not take any parameters.
+
+    This function does not return any values.
+
+    Raises:
+        Exception: If there is an error during the logout process.
+    """
     try:
-        driver.find_element(By.CSS_SELECTOR, '.user-menu__username').click()
-        driver.find_element(
-            By.CSS_SELECTOR, '.row:nth-child(2) > .user-menu__text').click()
+        find_element_by_selector('.user-menu__username').click()
+        find_element_by_selector(
+            '.row:nth-child(2) > .user-menu__text').click()
 
         # Записываем успешный выход в лог
         logging.info("Успешный выход")
@@ -55,44 +114,78 @@ def logout(driver):
 
 
 def main_page(driver):
+    """
+    A function that loads the main page in the browser and logs the result.
+
+    Args:
+        driver: The driver object for interacting with the browser.
+
+    Returns:
+        None.
+    """
     try:
 
-        driver.maximize_window()
+        driver.minimize_window()
         driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
+        course_cards = driver.find_elements(By.CLASS_NAME, "course-card")
+        logging.info(
+            f'Количество курсов на главной странице: {len(course_cards)}')
 
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
 
 
-def find_element(selector):
-    return WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, selector))
-    )
+def find_first_course(driver):
+    """
+    Finds the first course on the web page using the given driver.
+
+    Args:
+        driver (WebDriver): The web driver to use for finding the course.
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If there is an error while finding the first course.
+
+    Logging:
+        Logs info message 'Поиск первого курса произведен успешно' if the first course is found successfully.
+        Logs error message with the specific exception if there is an error while finding the first course.
+    """
+    try:
+        course_card = driver.find_elements(By.CLASS_NAME, "course-card")[0]
+        course_card_content = course_card.find_element(
+            By.CLASS_NAME, "course-card__content")
+        course_router = course_card_content.find_element(
+            By.CLASS_NAME, "course-card__router")
+        course_router.click()
+        logging.info('Поиск первого курса произведен успешно')
+    except Exception as e:
+        logging.error(f"Ошибка при поиске первого курса: {str(e)}")
 
 
 def main():
     try:
         logging.info("Начало тестирования")
-        logging.info("-------------------")
 
         main_page(driver)
-        time.sleep(1)
+        time.sleep(3)
 
-        login(driver, '+12345678901', os.environ['PASSWORD'])
-        time.sleep(1)
+        find_first_course(driver)
+        time.sleep(3)
 
-        logout(driver)
-        time.sleep(1)
+        log_in(trainer, password)
+        time.sleep(3)
+        log_out()
 
-        login(driver, '+12345678902', os.environ['PASSWORD'])
-        time.sleep(1)
+        log_in(user, password)
+        time.sleep(3)
+        log_out()
 
-        logout(driver)
-        time.sleep(1)
-
-        logging.info("Тестирование завершено!")
+        time.sleep(3)
+        logging.info("Завершение тестирования")
 
     except Exception as e:
         # Записываем общую ошибку в лог
