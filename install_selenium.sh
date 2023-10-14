@@ -1,3 +1,4 @@
+# app require installed python3.10
 sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo apt update
 sudo apt install -y python3-tk python3-pip pythonpy python3.10 wget unzip
