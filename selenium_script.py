@@ -125,13 +125,13 @@ def main_page(driver):
     """
     try:
 
-        driver.minimize_window()
+        # driver.maximize_window()
         driver.get(url)
         logging.info("Успешная загрузка главной страницы")
         time.sleep(2)
-        course_cards = driver.find_elements(By.CLASS_NAME, "course-card")
+        course_card = driver.find_elements(By.CLASS_NAME, "course-card")
         logging.info(
-            f'Количество курсов на главной странице: {len(course_cards)}')
+            f'Количество курсов на главной странице: {len(course_card)}')
 
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
@@ -161,9 +161,32 @@ def find_first_course(driver):
         course_router = course_card_content.find_element(
             By.CLASS_NAME, "course-card__router")
         course_router.click()
-        logging.info('Поиск первого курса произведен успешно')
+        logging.info('Поиск первого курса произведен успешно!')
     except Exception as e:
         logging.error(f"Ошибка при поиске первого курса: {str(e)}")
+
+
+def course_info(driver):
+    try:
+        logging.info('Поиск информации о курсе...')
+        time.sleep(1)
+        page_title_text = driver.find_element(
+            By.CLASS_NAME, 'page-title__text')
+        author_name = driver.find_element(
+            By.CLASS_NAME, 'author__name')
+        author_rank = driver.find_element(
+            By.CLASS_NAME, 'author__rank')
+        # course_free_lessons = driver.find_element(
+        #     By.CLASS_NAME, 'course__free-lessons').get_attribute('outerHTML')
+        lesson_of_a_course__title = driver.find_elements(
+            By.CLASS_NAME, 'lesson-of-a-course__title')
+        logging.info(f'Заголовок курса: {page_title_text.text}')
+        logging.info(f'Автор курса: {author_rank.text} {author_name.text}')
+        for element in lesson_of_a_course__title:
+            logging.info(f'Содержание курса: {element.text}')
+        logging.info('Курс загружен успешно')
+    except Exception as e:
+        logging.error(f"Ошибка при поиске информации о курсе: {str(e)}")
 
 
 def main():
@@ -171,7 +194,6 @@ def main():
         logging.info("Начало тестирования")
 
         main_page(driver)
-        time.sleep(3)
 
         log_in(trainer, password)
         time.sleep(3)
@@ -182,6 +204,9 @@ def main():
         log_out()
 
         find_first_course(driver)
+        time.sleep(3)
+
+        course_info(driver)
         time.sleep(3)
 
         time.sleep(3)
