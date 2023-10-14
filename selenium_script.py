@@ -194,6 +194,7 @@ def main():
         logging.info("Начало тестирования")
 
         main_page(driver)
+        time.sleep(1)
 
         log_in(trainer, password)
         time.sleep(3)
