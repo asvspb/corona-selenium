@@ -74,6 +74,7 @@ def log_in(username, password):
         None
     """
     try:
+        logging.info(f"Попытка авторизации пользователя {username}...")
         find_element_by_selector('.user-button__login .block').click()
         find_element_by_name('user_login').clear()
         find_element_by_name('user_login').send_keys(username)
@@ -81,11 +82,10 @@ def log_in(username, password):
         find_element_by_name('user_password').send_keys(password)
         find_element_by_name('user_password').send_keys(Keys.ENTER)
 
-        # Записываем успешный вход в лог
+        time.sleep(1)
         logging.info(f"Успешный вход: {username}")
 
     except Exception as e:
-        # Записываем ошибку входа в лог
         logging.error(f"Ошибка при входе: {username} - {str(e)}")
 
 
@@ -101,6 +101,7 @@ def log_out():
         Exception: If there is an error during the logout process.
     """
     try:
+        logging.info("Попытка деавторизации пользователя...")
         find_element_by_selector('.user-menu__username').click()
         find_element_by_selector(
             '.row:nth-child(2) > .user-menu__text').click()
@@ -126,49 +127,45 @@ def main_page(driver):
     try:
 
         # driver.maximize_window()
-        driver.get(url)
-        logging.info("Успешная загрузка главной страницы")
-        time.sleep(2)
-        course_card = driver.find_elements(By.CLASS_NAME, "course-card")
         logging.info(
-            f'Количество курсов на главной странице: {len(course_card)}')
+            "Загрузка главной страницы...")
+        driver.get(url)
+        time.sleep(2)
+        courses = driver.find_elements(By.CLASS_NAME, "course-card")
+        logging.info("Поиск курсов на главной странице...")
+        time.sleep(1)
+        logging.info(
+            f'Количество курсов на главной странице: {len(courses)}')
+        courses_titles = driver.find_elements(
+            By.CLASS_NAME, 'course-card__title'
+        )
+        for element in courses_titles:
+            logging.info(f'Название курса: {element.text}')
+        logging.info("Успешная загрузка главной страницы!")
 
     except Exception as e:
         logging.error(f"Ошибка при загрузке главной страницы: {str(e)}")
 
 
-def find_first_course(driver):
+def course_info(driver):
     """
-    Finds the first course on the web page using the given driver.
+    A function that retrieves information about a course using a webdriver.
 
     Args:
-        driver (WebDriver): The web driver to use for finding the course.
+        driver: An instance of a webdriver.
 
     Returns:
-        None
-
-    Raises:
-        Exception: If there is an error while finding the first course.
-
-    Logging:
-        Logs info message 'Поиск первого курса произведен успешно' if the first course is found successfully.
-        Logs error message with the specific exception if there is an error while finding the first course.
-    """  # noqa: E501
+        None. The function logs information about the course using the logging module.
+    """
     try:
+        logging.info('Поиск заданного курса на главной странице...')
         course_card = driver.find_elements(By.CLASS_NAME, "course-card")[0]
         course_card_content = course_card.find_element(
             By.CLASS_NAME, "course-card__content")
         course_router = course_card_content.find_element(
             By.CLASS_NAME, "course-card__router")
         course_router.click()
-        logging.info('Поиск первого курса произведен успешно!')
-    except Exception as e:
-        logging.error(f"Ошибка при поиске первого курса: {str(e)}")
-
-
-def course_info(driver):
-    try:
-        logging.info('Поиск информации о курсе...')
+        logging.info('Переход на страницу курса...')
         time.sleep(1)
         page_title_text = driver.find_element(
             By.CLASS_NAME, 'page-title__text')
@@ -176,41 +173,76 @@ def course_info(driver):
             By.CLASS_NAME, 'author__name')
         author_rank = driver.find_element(
             By.CLASS_NAME, 'author__rank')
-        # course_free_lessons = driver.find_element(
-        #     By.CLASS_NAME, 'course__free-lessons').get_attribute('outerHTML')
         lesson_of_a_course__title = driver.find_elements(
             By.CLASS_NAME, 'lesson-of-a-course__title')
+        lesson_of_a_course = driver.find_elements(
+            By.CLASS_NAME, 'lesson-of-a-course')
         logging.info(f'Заголовок курса: {page_title_text.text}')
         logging.info(f'Автор курса: {author_rank.text} {author_name.text}')
+        logging.info(f'Количество уроков в курсе: {len(lesson_of_a_course)}')
         for element in lesson_of_a_course__title:
             logging.info(f'Содержание курса: {element.text}')
-        logging.info('Курс загружен успешно')
+        logging.info('Курс успешно найден!')
     except Exception as e:
         logging.error(f"Ошибка при поиске информации о курсе: {str(e)}")
 
 
+def lesson_info(driver):
+    """
+    Retrieves information about a specific lesson on the course page.
+
+    Parameters:
+        driver (WebDriver): The WebDriver instance used to interact with the web page.
+
+    Returns:
+        None
+    """
+    try:
+        logging.info('Поиск заданного урока на странице курса...')
+        time.sleep(2)
+        lessons = driver.find_elements(
+            By.CLASS_NAME, 'lesson-of-a-course')
+        number_of_lesson = lessons[1]
+        number_of_lesson.click()
+        logging.info('Переход на страницу урока...')
+        time.sleep(2)
+        lesson_title = driver.find_element(
+            By.CLASS_NAME, 'page-title__text')
+        logging.info('Название урока: ' + lesson_title.text)
+        logging.info('Урок успешно загружен!')
+        logging.info('Переход на главную страницу...')
+        time.sleep(2)
+        driver.get(url)
+    except Exception as e:
+        logging.error(f"Ошибка при поиске информации о уроке: {str(e)}")
+
+
 def main():
     try:
-        logging.info("Начало тестирования")
-
         main_page(driver)
-
-        log_in(trainer, password)
         time.sleep(3)
-        log_out()
-
-        log_in(user, password)
-        time.sleep(3)
-        log_out()
-
-        find_first_course(driver)
-        time.sleep(3)
+        logging.info("->")
 
         course_info(driver)
-        time.sleep(3)
+        time.sleep(1)
+        logging.info("->")
 
-        time.sleep(3)
-        logging.info("Завершение тестирования")
+        lesson_info(driver)
+        time.sleep(1)
+        logging.info("->")
+
+        log_in(trainer, password)
+        time.sleep(2)
+        log_out()
+        logging.info("->")
+
+        log_in(user, password)
+        time.sleep(2)
+        log_out()
+        logging.info("->")
+
+        time.sleep(5)
+        logging.info("------------------------------------")
 
     except Exception as e:
         # Записываем общую ошибку в лог
